@@ -1,0 +1,33 @@
+{
+    "name": "sorax-restserver",
+    "version": "1.0.0",
+    "engines": {
+        "node": "14.16.0"
+    },
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node server/server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.0.1",
+        "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "express-fileupload": "^1.2.1",
+        "google-auth-library": "^7.0.3",
+        "jsonwebtoken": "^8.5.1",
+        "mogoose": "0.0.1-security",
+        "mongoose": "^5.12.2",
+        "mongoose-unique-validator": "^2.0.3",
+        "node": "^13.14.0",
+        "npm-check-updates": "^4.1.2",
+        "underscore": "^1.12.1"
+    },
+    "devDependencies": {
+        "minimist": "^1.2.5"
+    }
+}
