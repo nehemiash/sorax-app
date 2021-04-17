@@ -1,4 +1,4 @@
-require("./config/config");
+require("./server/config/config");
 const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(cors({ origin: true, credentials: true }));
 
 //Configuracion Global de Rutas
-app.use(require("./routes/index"));
+app.use(require("./server/routes/index"));
 
 mongoose.connect(
     process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
