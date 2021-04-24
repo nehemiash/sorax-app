@@ -16,7 +16,7 @@ process.env.CADUCIDAD_TOKEN = "48h";
 process.env.SEED = process.env.SEED || "este-es-el-seed-desarrollo";
 
 if (process.env.NODE_ENV === "dev") {
-    urlDB = "mongodb+srv://nemod:ulMgSH1Pk5nj1lsp@cluster0.rte5z.mongodb.net/sorax?retryWrites=true&w=majority";
+    urlDB = "mongodb://localhost:27017/sorax";
 } else {
     urlDB = process.env.MONGO_URI;
 }

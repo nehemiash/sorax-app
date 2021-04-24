@@ -30,9 +30,11 @@ let kbbSchema = new Schema({
     },
     situacion: String,
     invoice: String,
+    fechaInv: Date,
     factura: String,
     costo: Number,
     servicio: Number,
+    centro: String,
     usuario: {
         type: Schema.Types.ObjectId,
         ref: "Usuario",

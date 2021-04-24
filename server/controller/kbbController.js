@@ -23,7 +23,7 @@ let listar = async(req, res) => {
         .skip(skip)
         .limit(limite)
         .sort(sort)
-        .populate("parte", "vpn descripcion sku precioReg coreValue")
+        .populate("parte", "vpn descripcion sku precioReg coreValue precioStock precioExch")
         .populate("usuario", "nombre")
         .exec((err, kbbs) => {
             if (err) {
@@ -102,7 +102,9 @@ let crear = async(req, res) => {
         cobertura: body.cobertura,
         costo: body.costo,
         usuario: usuario,
+        centro: body.centro,
         factura: body.factura,
+        fechaInv: body.fechaInv,
         entrada: Date.now(),
         servicio: body.servicio,
         obs: body.obs,
@@ -149,6 +151,8 @@ let actualizar = (req, res) => {
         "estado",
         "invoice",
         "factura",
+        "centro",
+        "fechaInv",
         "costo",
         "servicio",
         "obs",
