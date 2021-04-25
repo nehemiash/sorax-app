@@ -12,5 +12,6 @@ app.get("/kbb/buscar/:termino", verificaToken, kbbCtrl.buscar);
 app.post("/kbb", verificaToken, kbbCtrl.crear);
 app.put("/kbb/:id", verificaToken, kbbCtrl.actualizar);
 app.put("/retornarkbb/:id", verificaToken, kbbCtrl.retornar);
+app.get("/kbbarchivo", verificaToken, kbbCtrl.buscarMultiple);
 
 module.exports = app;

@@ -279,6 +279,36 @@ let buscar = async(req, res) => {
         });
 };
 
+let buscarMultiple = async(req, res) => {
+    let ids = req.body.ids;
+    let sort = req.query.sort || "entrada";
+
+    Kbb.find({ _id: { $in: ids } })
+        .populate("parte", "vpn descripcion sku precioReg coreValue precioStock precioExch")
+        .populate("usuario", "nombre")
+        .sort(sort)
+        .exec((err, kbbs) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err,
+                });
+            }
+
+            if (Object.entries(kbbs).length === 0) {
+                return res.json({
+                    ok: false,
+                    message: "No se encontraron Kbbs",
+                });
+            }
+
+            res.json({
+                ok: true,
+                kbbs,
+            });
+        });
+};
+
 module.exports = {
     listar,
     mostrarPorId,
@@ -286,4 +316,5 @@ module.exports = {
     actualizar,
     buscar,
     retornar,
+    buscarMultiple,
 };
