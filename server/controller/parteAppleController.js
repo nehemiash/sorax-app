@@ -43,8 +43,6 @@ let listar = (req, res) => {
 let mostrarPorParte = (req, res) => {
     let termino = req.query.parte;
 
-    console.log(termino);
-
     ParteApple.findOne({ vpn: termino }).exec((err, parteapple) => {
         if (err) {
             return res.json({
