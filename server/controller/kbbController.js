@@ -23,8 +23,8 @@ let listar = async(req, res) => {
         .skip(skip)
         .limit(limite)
         .sort(sort)
-        .populate("parte", "vpn descripcion sku precioReg coreValue precioStock precioExch")
-        .populate("usuario", "nombre")
+        .populate("parte", "vpn descripcion -_id")
+        .select("sro parte orden entrada")
         .exec((err, kbbs) => {
             if (err) {
                 return res.json({
@@ -281,9 +281,6 @@ let buscar = async(req, res) => {
 
 let buscarMultiple = async(req, res) => {
     let ids = req.body.ids;
-
-    console.log(ids);
-
     let sort = req.query.sort || "entrada";
 
     Kbb.find({ _id: { $in: ids } })
