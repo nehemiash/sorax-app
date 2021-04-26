@@ -13,5 +13,6 @@ app.post("/kbb", verificaToken, kbbCtrl.crear);
 app.put("/kbb/:id", verificaToken, kbbCtrl.actualizar);
 app.put("/retornarkbb/:id", verificaToken, kbbCtrl.retornar);
 app.post("/kbbarchivo", verificaToken, kbbCtrl.buscarMultiple);
+app.get("/kbbtodo", verificaToken, kbbCtrl.listarTodo);
 
 module.exports = app;

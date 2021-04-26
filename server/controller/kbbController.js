@@ -309,6 +309,27 @@ let buscarMultiple = async(req, res) => {
         });
 };
 
+let listarTodo = async(req, res) => {
+    let sort = "orden";
+
+    await Kbb.find({ estado: true })
+        .sort(sort)
+        .populate("parte", "vpn descripcion -_id")
+        .select("sro parte orden centro entrada")
+        .exec((err, kbbs) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err,
+                });
+            }
+            res.json({
+                ok: true,
+                kbbs,
+            });
+        });
+};
+
 module.exports = {
     listar,
     mostrarPorId,
@@ -317,4 +338,5 @@ module.exports = {
     buscar,
     retornar,
     buscarMultiple,
+    listarTodo,
 };
