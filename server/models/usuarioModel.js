@@ -24,6 +24,9 @@ let usuarioSchema = new Schema({
     ultimoLogin: Date,
     tecnico: Boolean,
     funcion: String,
+    centro: String,
+    direccion: String,
+    documento: String,
     estado: {
         type: Boolean,
         default: true,

@@ -56,6 +56,9 @@ let crear = (req, res) => {
         ultimoLogin: Date.now(),
         tecnico: body.tecnico,
         funcion: body.funcion,
+        centro: body.centro,
+        direccion: body.direccion,
+        documento: body.documento,
     });
 
     usuario.save((err, usuarioDB) => {
@@ -84,7 +87,17 @@ let crear = (req, res) => {
 
 let actualizar = (req, res) => {
     let id = req.params.id;
-    let body = _.pick(req.body, ["nombre", "email", "telefono", "img", "tecnico", "funcion"]);
+    let body = _.pick(req.body, [
+        "nombre",
+        "email",
+        "telefono",
+        "img",
+        "tecnico",
+        "funcion",
+        "centro",
+        "direccion",
+        "documento",
+    ]);
 
     Usuario.findByIdAndUpdate(id, body, QueryOpts, (err, usuarioDB) => {
         if (err) {
