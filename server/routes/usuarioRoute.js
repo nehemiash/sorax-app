@@ -13,5 +13,6 @@ app.delete("/usuario/:id", [verificaToken, verificaAdmin_Role], usuarioCtrl.elim
 app.get("/usuario/buscar/:termino", verificaToken, usuarioCtrl.buscar);
 app.get("/usuario/verificar", [verificaToken], usuarioCtrl.verificar);
 app.get("/tecnico", verificaToken, usuarioCtrl.listarTecnicos);
+app.get("/tecnico", [verificaToken, verificaAdmin_Role], usuarioCtrl.listarTecnicos);
 
 module.exports = app;

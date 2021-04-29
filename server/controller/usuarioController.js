@@ -123,6 +123,34 @@ let actualizar = (req, res) => {
     });
 };
 
+let actualizaRol = (req, res) => {
+    let id = req.params.id;
+    let body = req.body.role;
+
+    Usuario.findByIdAndUpdate(id, body, QueryOpts, (err, usuarioDB) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err: err.message,
+            });
+        }
+
+        let token = jwt.sign({
+                usuario: usuarioDB,
+            },
+            process.env.SEED, { expiresIn: process.env.CADUCIDAD_TOKEN }
+        );
+
+        // usuarioDB.password = null;
+
+        res.json({
+            ok: true,
+            usuario: usuarioDB,
+            token,
+        });
+    });
+};
+
 let eliminar = (req, res) => {
     let id = req.params.id;
 
@@ -239,4 +267,5 @@ module.exports = {
     buscar,
     verificar,
     listarTecnicos,
+    actualizaRol,
 };
