@@ -12,17 +12,21 @@ let listar = (req, res) => {
     let total_paginas;
     let total_notas;
 
-    Nota.countDocuments({ estado: true }, (err, numOfDocs) => {
+    opts = {
+        tipo: filter,
+        estado: true,
+    };
+
+    Nota.countDocuments(opts, (err, numOfDocs) => {
         if (err) throw err;
         total_paginas = Math.ceil(numOfDocs / limite);
         total_notas = numOfDocs;
     });
 
-    Nota.find({ estado: true }, { tipo: filter })
+    Nota.find(opts)
         .skip(skip)
         .limit(limite)
-        .sort("creada")
-        .populate("usuario", "nombre -_id")
+        .populate("usuario", "nombre")
         .exec((err, notas) => {
             if (err) {
                 return res.json({
