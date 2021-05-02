@@ -18,7 +18,7 @@ let listar = (req, res) => {
         total_notas = numOfDocs;
     });
 
-    Nota.find({ estado: true }, { tipo: filter }, "-estado")
+    Nota.find({ estado: true }, { tipo: filter })
         .skip(skip)
         .limit(limite)
         .sort("creada")
