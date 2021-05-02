@@ -6,7 +6,7 @@ const Kbb = require("../models/kbbModel");
 let listar = async(req, res) => {
     let pagina = Number(req.query.pagina) || 1;
     let limite = Number(req.query.limite) || 15;
-    let sort = req.query.sort || "entrada";
+    let sort = req.query.sort || "-entrada";
 
     let skip = pagina - 1;
     skip = skip * limite;
