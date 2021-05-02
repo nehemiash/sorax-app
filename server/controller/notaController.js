@@ -18,12 +18,11 @@ let listar = (req, res) => {
         total_notas = numOfDocs;
     });
 
-    Nota.find({ estado: true }, "-estado")
+    Nota.find({ estado: true }, { tipo: sort }, "-estado")
         .skip(skip)
         .limit(limite)
         .sort(sort)
         .populate("usuario", "nombre -_id")
-        //.populate("orden", "numero -_id")
         .exec((err, notas) => {
             if (err) {
                 return res.json({
