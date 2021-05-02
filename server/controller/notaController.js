@@ -5,7 +5,7 @@ const { QueryOpts } = require("../controller/dbconfig");
 let listar = (req, res) => {
     let pagina = Number(req.query.pagina) || 1;
     let limite = Number(req.query.limite) || 15;
-    let sort = req.query.sort || "creada";
+    let filter = req.query.filter || "creada";
 
     let skip = pagina - 1;
     skip = skip * limite;
@@ -18,7 +18,7 @@ let listar = (req, res) => {
         total_notas = numOfDocs;
     });
 
-    Nota.find({ estado: true }, { tipo: sort }, "-estado")
+    Nota.find({ estado: true }, { tipo: filter }, "-estado")
         .skip(skip)
         .limit(limite)
         .sort(sort)
