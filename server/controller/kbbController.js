@@ -1,7 +1,77 @@
 const _ = require("underscore");
 const { QueryOpts } = require("../controller/dbconfig");
+const moment = require("moment");
 
 const Kbb = require("../models/kbbModel");
+
+let status = async(req, res) => {
+    let sin_devolver;
+
+    let formato = "YYYY-MM-DD";
+    let hoy = moment().format(formato);
+
+    let inicio_de_este_mes = moment().startOf("month").format(formato); // inicio de este mes
+    let fin_de_este_mes = moment(moment().startOf("month")).endOf("month").format(formato); // fin de este mes
+    let inicio_de_esta_semana = moment().startOf("week").format(formato); // inicio de esta semana
+    let fin_de_esta_semana = moment(moment().startOf("week")).endOf("week").format(formato);
+    let inicio_de_este_anio = moment().startOf("year").format(formato); // inicio de este año
+    let fin_de_este_anio = moment(moment().startOf("year")).endOf("year").format(formato);
+
+    let hace_una_semana = moment().subtract(7, "days").format(formato);
+    let hace_quince = moment().subtract(15, "days").format(formato);
+    let hace_un_mes = moment().subtract(1, "M").format(formato);
+
+    let estasemana = { entrada: { $gte: inicio_de_esta_semana, $lte: fin_de_esta_semana } };
+    let estemes = { entrada: { $gte: inicio_de_este_mes, $lte: fin_de_este_mes } };
+    let esteanio = { entrada: { $gte: inicio_de_este_anio, $lte: fin_de_este_anio } };
+    let masdeunasemana = ({ entrada: { $gte: "1980/01/01", $lte: hace_una_semana } }, { estado: true });
+    let masdequince = ({ entrada: { $gte: "1980/01/01", $lte: hace_quince } }, { estado: true });
+    let masdeunmes = ({ entrada: { $gte: "1980/01/01", $lte: hace_un_mes } }, { estado: true });
+
+    await Kbb.countDocuments(estasemana, (err, numOfDocs) => {
+        if (err) throw err;
+        estasemana = numOfDocs;
+    });
+
+    await Kbb.countDocuments(estemes, (err, numOfDocs) => {
+        if (err) throw err;
+        estemes = numOfDocs;
+    });
+
+    await Kbb.countDocuments(esteanio, (err, numOfDocs) => {
+        if (err) throw err;
+        esteanio = numOfDocs;
+    });
+
+    await Kbb.countDocuments(masdeunasemana, (err, numOfDocs) => {
+        if (err) throw err;
+        masdeunasemana = numOfDocs;
+    });
+
+    await Kbb.countDocuments(masdequince, (err, numOfDocs) => {
+        if (err) throw err;
+        masdequince = numOfDocs;
+    });
+
+    await Kbb.countDocuments(masdeunmes, (err, numOfDocs) => {
+        if (err) throw err;
+        masdeunmes = numOfDocs;
+    });
+
+    res.json({
+        ok: true,
+        conteo: {
+            estasemana,
+            estemes,
+            esteanio,
+        },
+        pendientes: {
+            masdeunasemana,
+            masdequince,
+            masdeunmes,
+        },
+    });
+};
 
 let listar = async(req, res) => {
     let pagina = Number(req.query.pagina) || 1;
@@ -13,13 +83,15 @@ let listar = async(req, res) => {
     let total_paginas;
     let total_kbbs;
 
-    await Kbb.countDocuments({ estado: true }, (err, numOfDocs) => {
+    opts = { estado: true };
+
+    await Kbb.countDocuments(opts, (err, numOfDocs) => {
         if (err) throw err;
         total_paginas = Math.ceil(numOfDocs / limite);
         total_kbbs = numOfDocs;
     });
 
-    await Kbb.find({ estado: true })
+    Kbb.find(opts)
         .skip(skip)
         .limit(limite)
         .sort(sort)
@@ -339,4 +411,5 @@ module.exports = {
     retornar,
     buscarMultiple,
     listarTodo,
+    status,
 };

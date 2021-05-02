@@ -21,6 +21,7 @@
         "google-auth-library": "^7.0.3",
         "jsonwebtoken": "^8.5.1",
         "mogoose": "0.0.1-security",
+        "moment": "^2.29.1",
         "mongoose": "^5.12.2",
         "mongoose-unique-validator": "^2.0.3",
         "node": "^13.14.0",

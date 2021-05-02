@@ -7,6 +7,7 @@ const kbbCtrl = require("../controller/kbbController");
 let app = express();
 
 app.get("/kbb", verificaToken, kbbCtrl.listar);
+app.get("/kbbstatus", verificaToken, kbbCtrl.status);
 app.get("/kbb/:id", verificaToken, kbbCtrl.mostrarPorId);
 app.get("/kbb/buscar/:termino", verificaToken, kbbCtrl.buscar);
 app.post("/kbb", verificaToken, kbbCtrl.crear);
