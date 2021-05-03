@@ -125,7 +125,7 @@ let actualizar = (req, res) => {
 
 let actualizaRol = (req, res) => {
     let id = req.params.id;
-    let body = req.body.role;
+    let body = _.pick(req.body, ["role"]);
 
     Usuario.findByIdAndUpdate(id, body, QueryOpts, (err, usuarioDB) => {
         if (err) {
@@ -135,18 +135,9 @@ let actualizaRol = (req, res) => {
             });
         }
 
-        let token = jwt.sign({
-                usuario: usuarioDB,
-            },
-            process.env.SEED, { expiresIn: process.env.CADUCIDAD_TOKEN }
-        );
-
-        // usuarioDB.password = null;
-
         res.json({
             ok: true,
             usuario: usuarioDB,
-            token,
         });
     });
 };
