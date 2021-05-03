@@ -17,6 +17,10 @@ let notasSchema = new Schema({
         type: Boolean,
         default: true,
     },
+    completada: {
+        type: Boolean,
+        default: false,
+    },
 }, { versionKey: false });
 
 module.exports = mongoose.model("Nota", notasSchema);

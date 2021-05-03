@@ -122,6 +122,7 @@ let actualizar = (req, res) => {
 
     let descNota = {
         descripcion: body.descripcion,
+        completada: body.completada,
     };
 
     Nota.findByIdAndUpdate(id, descNota, QueryOpts, (err, notaActualizada) => {
