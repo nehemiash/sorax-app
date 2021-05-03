@@ -23,7 +23,7 @@ let listar = (req, res) => {
         total_usuarios = numOfDocs;
     });
 
-    Usuario.find({ estado: true }, "nombre email estado creado ultimoLogin funcion tecnico telefono")
+    Usuario.find({ estado: true }, "nombre email estado creado ultimoLogin funcion tecnico telefono role")
         .skip(skip)
         .limit(limite)
         .exec((err, usuarios) => {
