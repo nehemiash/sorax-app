@@ -35,7 +35,7 @@ let verificaAdmin_Role = (req, res, next) => {
         }
         req.usuario = decoded.usuario;
 
-        if (decoded.usuario.role === "ADMIN_ROLE") {
+        if (req.usuario.role === "ADMIN_ROLE") {
             next();
         } else {
             return res.json({
