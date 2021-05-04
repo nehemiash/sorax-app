@@ -21,44 +21,52 @@ let status = async(req, res) => {
     let hace_quince = moment().subtract(15, "days").format(formato);
     let hace_un_mes = moment().subtract(1, "M").format(formato);
 
-    let estasemana = { entrada: { $gte: inicio_de_esta_semana, $lte: fin_de_esta_semana } };
-    let estemes = { entrada: { $gte: inicio_de_este_mes, $lte: fin_de_este_mes } };
-    let esteanio = { entrada: { $gte: inicio_de_este_anio, $lte: fin_de_este_anio } };
-    let masdeunasemana = ({ entrada: { $gte: "1980/01/01", $lte: hace_una_semana } }, { estado: true });
-    let masdequince = ({ entrada: { $gte: "1980/01/01", $lte: hace_quince } }, { estado: true });
-    let masdeunmes = ({ entrada: { $gte: "1980/01/01", $lte: hace_un_mes } }, { estado: true });
+    let esta_semana = { entrada: { $gte: inicio_de_esta_semana, $lte: fin_de_esta_semana } };
+    let este_mes = { entrada: { $gte: inicio_de_este_mes, $lte: fin_de_este_mes } };
+    let este_anio = { entrada: { $gte: inicio_de_este_anio, $lte: fin_de_este_anio } };
 
-    await Kbb.countDocuments(estasemana, (err, numOfDocs) => {
+    let mas_de_una_semana = ({ estado: true }, { entrada: { $lte: hace_una_semana } });
+    let mas_de_quince = ({ estado: true }, { entrada: { $lte: hace_quince } });
+    let mas_de_un_mes = ({ estado: true }, { entrada: { $lte: hace_un_mes } });
+
+    let estasemana;
+    let estemes;
+    let esteanio;
+    let masdeunasemana;
+    let masdequince;
+    let masdeunmes;
+
+    await Kbb.countDocuments(esta_semana, (err, numOfDocs) => {
         if (err) throw err;
         estasemana = numOfDocs;
     });
 
-    await Kbb.countDocuments(estemes, (err, numOfDocs) => {
+    await Kbb.countDocuments(este_mes, (err, numOfDocs) => {
         if (err) throw err;
         estemes = numOfDocs;
     });
 
-    await Kbb.countDocuments(esteanio, (err, numOfDocs) => {
+    await Kbb.countDocuments(este_anio, (err, numOfDocs) => {
         if (err) throw err;
         esteanio = numOfDocs;
     });
 
-    await Kbb.countDocuments(masdeunasemana, (err, numOfDocs) => {
+    await Kbb.countDocuments(mas_de_una_semana, (err, numOfDocs) => {
         if (err) throw err;
         masdeunasemana = numOfDocs;
     });
 
-    await Kbb.countDocuments(masdequince, (err, numOfDocs) => {
+    await Kbb.countDocuments(mas_de_quince, (err, numOfDocs) => {
         if (err) throw err;
         masdequince = numOfDocs;
     });
 
-    await Kbb.countDocuments(masdeunmes, (err, numOfDocs) => {
+    await Kbb.countDocuments(mas_de_un_mes, (err, numOfDocs) => {
         if (err) throw err;
         masdeunmes = numOfDocs;
     });
 
-    res.json({
+    await res.json({
         ok: true,
         conteo: {
             estasemana,
