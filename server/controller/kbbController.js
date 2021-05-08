@@ -25,9 +25,9 @@ let status = async(req, res) => {
     let este_mes = { entrada: { $gte: inicio_de_este_mes, $lte: fin_de_este_mes } };
     let este_anio = { entrada: { $gte: inicio_de_este_anio, $lte: fin_de_este_anio } };
 
-    let mas_de_una_semana = ({ estado: true }, { entrada: { $lte: hace_una_semana } });
-    let mas_de_quince = ({ estado: true }, { entrada: { $lte: hace_quince } });
-    let mas_de_un_mes = ({ estado: true }, { entrada: { $lte: hace_un_mes } });
+    let mas_de_una_semana = ({ entrada: { $lte: hace_una_semana } }, { estado: true });
+    let mas_de_quince = ({ entrada: { $lte: hace_quince } }, { estado: true });
+    let mas_de_un_mes = ({ entrada: { $lte: hace_un_mes } }, { estado: true });
 
     let estasemana;
     let estemes;
@@ -35,6 +35,8 @@ let status = async(req, res) => {
     let masdeunasemana;
     let masdequince;
     let masdeunmes;
+    let retornar;
+    let retornado;
 
     await Kbb.countDocuments(esta_semana, (err, numOfDocs) => {
         if (err) throw err;
@@ -66,17 +68,29 @@ let status = async(req, res) => {
         masdeunmes = numOfDocs;
     });
 
+    await Kbb.countDocuments({ estado: true }, (err, numOfDocs) => {
+        if (err) throw err;
+        retornar = numOfDocs;
+    });
+
+    await Kbb.countDocuments({ estado: false }, (err, numOfDocs) => {
+        if (err) throw err;
+        retornado = numOfDocs;
+    });
+
     await res.json({
         ok: true,
         conteo: {
             estasemana,
             estemes,
             esteanio,
+            retornado,
         },
         pendientes: {
             masdeunasemana,
             masdequince,
             masdeunmes,
+            retornar,
         },
     });
 };
