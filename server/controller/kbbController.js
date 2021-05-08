@@ -85,13 +85,22 @@ let listar = async(req, res) => {
     let pagina = Number(req.query.pagina) || 1;
     let limite = Number(req.query.limite) || 15;
     let sort = req.query.sort || "-entrada";
+    let filter = req.query.filter;
 
     let skip = pagina - 1;
     skip = skip * limite;
     let total_paginas;
     let total_kbbs;
 
-    opts = { estado: true };
+    switch (filter) {
+        case "todos":
+            opts = { estado: true };
+            break;
+
+        default:
+            opts = { centro: filter };
+            break;
+    }
 
     await Kbb.countDocuments(opts, (err, numOfDocs) => {
         if (err) throw err;
@@ -99,7 +108,7 @@ let listar = async(req, res) => {
         total_kbbs = numOfDocs;
     });
 
-    Kbb.find(opts)
+    Kbb.find(opts, { estado: true })
         .skip(skip)
         .limit(limite)
         .sort(sort)
