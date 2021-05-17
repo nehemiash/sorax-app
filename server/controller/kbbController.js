@@ -116,7 +116,7 @@ let listar = async(req, res) => {
             break;
     }
 
-    await Kbb.countDocuments(opts, (err, numOfDocs) => {
+    await Kbb.countDocuments([{ estado: true }, opts], (err, numOfDocs) => {
         if (err) throw err;
         total_paginas = Math.ceil(numOfDocs / limite);
         total_kbbs = numOfDocs;
