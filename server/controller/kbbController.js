@@ -111,7 +111,11 @@ let listar = async(req, res) => {
             opts = { estado: true };
             break;
 
-        default:
+        case "ishop":
+            opts = { estado: true, centro: filter };
+            break;
+
+        case "cellshop":
             opts = { estado: true, centro: filter };
             break;
     }
