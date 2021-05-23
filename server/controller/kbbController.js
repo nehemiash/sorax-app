@@ -122,7 +122,7 @@ let listar = async(req, res) => {
         total_kbbs = numOfDocs;
     });
 
-    Kbb.find({ estado: true }, opts)
+    Kbb.find(opts)
         .skip(skip)
         .limit(limite)
         .sort(sort)
