@@ -131,7 +131,7 @@ let listar = async(req, res) => {
         .limit(limite)
         .sort(sort)
         .populate("parte", "vpn descripcion -_id")
-        .select("sro parte orden entrada cobertura guiaExp")
+        .select("sro parte orden entrada cobertura guiaExp situacion ")
         .exec((err, kbbs) => {
             if (err) {
                 return res.json({
