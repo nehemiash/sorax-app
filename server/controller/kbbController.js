@@ -391,7 +391,7 @@ let buscarMultiple = async(req, res) => {
     let sort = req.query.sort || "entrada";
 
     Kbb.find({ _id: { $in: ids } })
-        .populate("parte", "vpn descripcion sku precioReg coreValue precioStock precioExch")
+        .populate("parte")
         .populate("usuario", "nombre")
         .sort(sort)
         .exec((err, kbbs) => {
