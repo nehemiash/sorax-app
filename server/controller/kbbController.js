@@ -422,7 +422,7 @@ let listarTodo = async(req, res) => {
     await Kbb.find({ estado: true })
         .sort(sort)
         .populate("parte", "vpn descripcion -_id")
-        .select("sro parte orden centro entrada")
+        .select("sro parte orden centro entrada cobertura")
         .exec((err, kbbs) => {
             if (err) {
                 return res.json({
