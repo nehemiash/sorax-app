@@ -107,14 +107,13 @@ let listar = async(req, res) => {
     let sort = req.query.sort || "-entrada";
     let situacion = req.query.situacion || "recepcionado";
     let status = req.query.estado || true;
-    let cobertura = "iw" || "oow";
 
     let skip = pagina - 1;
     skip = skip * limite;
     let total_paginas;
     let total_kbbs;
 
-    opts = { estado: status, situacion, cobertura };
+    opts = { estado: status, situacion };
 
     await Kbb.countDocuments(opts, (err, numOfDocs) => {
         if (err) throw err;
