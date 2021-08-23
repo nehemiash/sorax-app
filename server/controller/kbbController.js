@@ -73,7 +73,7 @@ let status = async(req, res) => {
         retornar = numOfDocs;
     });
 
-    await Kbb.countDocuments({ estado: false, sitacion: "retornado" }, (err, numOfDocs) => {
+    await Kbb.countDocuments({ estado: false, situacion: "retornado" }, (err, numOfDocs) => {
         if (err) throw err;
         retornado = numOfDocs;
     });
