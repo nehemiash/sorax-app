@@ -26,6 +26,7 @@ let listar = (req, res) => {
     Usuario.find({ estado: true }, "nombre email estado creado ultimoLogin funcion tecnico telefono role")
         .skip(skip)
         .limit(limite)
+        .sort(nombre)
         .exec((err, usuarios) => {
             if (err) {
                 return res.json({
