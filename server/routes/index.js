@@ -16,5 +16,5 @@ app.use(require("./etapaRoute"));
 app.use(require("./logRoute"));
 app.use(require("./kbbRoute"));
 app.use(require("./parteAppleRoute"));
-
+app.use(require("./consolidacionRoute"));
 module.exports = app;

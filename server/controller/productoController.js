@@ -112,7 +112,7 @@ let buscar = (req, res) => {
         total_prod = numOfDocs;
     });
 
-    let regex = new RegExp(termino, "i");
+    let regex = new RegExp(termino, "gi");
 
     Producto.find({
             estado: true,

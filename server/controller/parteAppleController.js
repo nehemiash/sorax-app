@@ -97,22 +97,24 @@ let mostrarPorId = (req, res) => {
 let buscar = (req, res) => {
     let termino = req.params.termino;
     let pagina = Number(req.query.pagina) || 1;
-    let limite = Number(req.query.limite) || 15;
+    let limite = Number(req.query.limite) || 20;
 
     let skip = pagina - 1;
     skip = skip * limite;
 
     let total_paginas;
     let total_parteapple;
-    let regex = new RegExp(termino, "i");
+    let regex = new RegExp(termino, "gi");
 
-    ParteApple.countDocuments({ $or: [{ descripcion: regex }, { vpn: termino }, { sku: termino }] }, (err, numOfDocs) => {
+    ParteApple.countDocuments({ $or: [{ descripcion: regex }, { vpn: regex }, { sku: termino }] }, (err, numOfDocs) => {
         if (err) throw err;
         total_paginas = Math.ceil(numOfDocs / limite);
         total_parteapple = numOfDocs;
     });
 
-    ParteApple.find({ $or: [{ descripcion: regex }, { vpn: termino }, { sku: termino }] })
+    ParteApple.find({
+            $or: [{ descripcion: regex }, { vpn: regex }, { sku: termino }],
+        })
         .skip(skip)
         .limit(limite)
         .sort("descripcion")

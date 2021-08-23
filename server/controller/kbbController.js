@@ -99,26 +99,60 @@ let listar = async(req, res) => {
     let pagina = Number(req.query.pagina) || 1;
     let limite = Number(req.query.limite) || 15;
     let sort = req.query.sort || "-entrada";
-    let filter = req.query.filter;
+    let situacion = req.query.situacion || "recepcionado";
+    let status = req.query.estado || true;
+    let cobertura = "iw" || "oow";
 
     let skip = pagina - 1;
     skip = skip * limite;
     let total_paginas;
     let total_kbbs;
 
-    switch (filter) {
-        case "todos":
-            opts = { estado: true };
-            break;
+    opts = { estado: status, situacion, cobertura };
 
-        case "ishop":
-            opts = { estado: true, centro: filter };
-            break;
+    await Kbb.countDocuments(opts, (err, numOfDocs) => {
+        if (err) throw err;
+        total_paginas = Math.ceil(numOfDocs / limite);
+        total_kbbs = numOfDocs;
+    });
 
-        case "cellshop":
-            opts = { estado: true, centro: filter };
-            break;
-    }
+    Kbb.find(opts)
+        .skip(skip)
+        .limit(limite)
+        .sort(sort)
+        .populate("parte", "vpn descripcion -_id")
+        .select("sro parte orden entrada cobertura guiaExp situacion ")
+        .exec((err, kbbs) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err,
+                });
+            }
+            res.json({
+                ok: true,
+                pagina,
+                total_paginas,
+                total_kbbs,
+                kbbs,
+            });
+        });
+};
+
+let listarCentro = async(req, res) => {
+    let pagina = Number(req.query.pagina) || 1;
+    let limite = Number(req.query.limite) || 15;
+    let sort = req.query.sort || "-entrada";
+    let filter = req.query.filter;
+    let situacion = req.query.situacion || "recepcionado";
+    let status = req.query.estado || true;
+
+    let skip = pagina - 1;
+    skip = skip * limite;
+    let total_paginas;
+    let total_kbbs;
+
+    opts = { estado: status, centro: filter, situacion };
 
     await Kbb.countDocuments(opts, (err, numOfDocs) => {
         if (err) throw err;
@@ -165,6 +199,7 @@ let mostrarPorId = async(req, res) => {
     await Kbb.findById(id)
         .populate("parte", "vpn descripcion sku precioStock precioExch precioReg coreValue")
         .populate("usuario", "nombre")
+        .populate("tecnico", "nombre")
         .exec((err, kbbDB) => {
             if (err) {
                 return res.json({
@@ -215,6 +250,7 @@ let crear = async(req, res) => {
         entrada: Date.now(),
         servicio: body.servicio,
         obs: body.obs,
+        tecnico: body.tecnico,
     });
 
     kbb.save((err, kbbDB) => {
@@ -263,6 +299,7 @@ let actualizar = (req, res) => {
         "costo",
         "servicio",
         "obs",
+        "tecnico",
     ]);
 
     Kbb.findByIdAndUpdate(id, body, QueryOpts).exec((err, kbbAct) => {
@@ -322,6 +359,142 @@ let retornar = (req, res) => {
     });
 };
 
+let retornarMultiple = (req, res) => {
+    let ids = req.body.ids;
+    let obs = req.body.obs;
+    let tipo = req.body.tipo;
+    let consoStatus = req.body.consolidado;
+
+    switch (tipo) {
+        case "retornar":
+            let retornar = {
+                obs: obs,
+                consolidado: consoStatus,
+                situacion: "retornado",
+                estado: false,
+            };
+            Kbb.updateMany({ _id: { $in: ids } }, { $set: retornar }, { multi: true }).exec((err, kbbAct) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err,
+                    });
+                }
+
+                if (!kbbAct) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: "Kbbs no encontrados",
+                        },
+                    });
+                }
+
+                res.json({
+                    ok: true,
+                    kbbAct,
+                });
+            });
+            break;
+
+        case "transito":
+            let transito = {
+                obs: obs,
+                consolidado: consoStatus,
+                situacion: "transito",
+                estado: false,
+                salida: Date.now(),
+            };
+            Kbb.updateMany({ _id: { $in: ids } }, { $set: transito }, { multi: true }).exec((err, kbbAct) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err,
+                    });
+                }
+
+                if (!kbbAct) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: "Kbbs no encontrados",
+                        },
+                    });
+                }
+
+                res.json({
+                    ok: true,
+                    kbbAct,
+                });
+            });
+            break;
+
+        case "recepcionado":
+            let recepcionado = {
+                obs: "",
+                consolidado: false,
+                situacion: "recepcionado",
+                estado: true,
+                salida: "",
+            };
+            Kbb.updateMany({ _id: { $in: ids } }, { $set: recepcionado }, { multi: true }).exec((err, kbbAct) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err,
+                    });
+                }
+
+                if (!kbbAct) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: "Kbbs no encontrados",
+                        },
+                    });
+                }
+
+                res.json({
+                    ok: true,
+                    kbbAct,
+                });
+            });
+            break;
+
+        case "consolidado":
+            let consolidado = {
+                obs: obs,
+                consolidado: consoStatus,
+                situacion: "consolidado",
+                estado: false,
+                salida: "",
+            };
+            Kbb.updateMany({ _id: { $in: ids } }, { $set: consolidado }, { multi: true }).exec((err, kbbAct) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err,
+                    });
+                }
+
+                if (!kbbAct) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: "Kbbs no encontrados",
+                        },
+                    });
+                }
+
+                res.json({
+                    ok: true,
+                    kbbAct,
+                });
+            });
+            break;
+    }
+};
+
 let buscar = async(req, res) => {
     let termino = req.params.termino;
     let pagina = Number(req.query.pagina) || 1;
@@ -347,19 +520,20 @@ let buscar = async(req, res) => {
         nan = termino;
     }
 
-    await Kbb.find({
+    Kbb.find({
             $or: [
-                { sro: termino },
-                { gsxNum: termino },
-                { orden: nan },
-                { kbb: termino },
-                { kgb: termino },
-                { guiaImp: termino },
-                { guiaExp: termino },
+                { sro: regex },
+                { gsxNum: regex },
+                { orden: regex },
+                { kbb: regex },
+                { kgb: regex },
+                { guiaImp: regex },
+                { guiaExp: regex },
             ],
         })
         .populate("parte", "vpn descripcion sku precioReg coreValue")
         .populate("usuario", "nombre")
+        .populate("tecnico", "nombre")
         .sort(sort)
         .exec((err, kbbs) => {
             if (err) {
@@ -388,7 +562,7 @@ let buscar = async(req, res) => {
 
 let buscarMultiple = async(req, res) => {
     let ids = req.body.ids;
-    let sort = req.query.sort || "entrada";
+    let sort = req.body.sort || "entrada";
 
     Kbb.find({ _id: { $in: ids } })
         .populate("parte")
@@ -447,4 +621,6 @@ module.exports = {
     buscarMultiple,
     listarTodo,
     status,
+    retornarMultiple,
+    listarCentro,
 };

@@ -47,6 +47,9 @@ let kbbSchema = new Schema({
     },
     financieroFec: Date,
     obs: String,
+    tecnico: {
+        type: Schema.Types.ObjectId,
+        ref: "Usuario",
+    },
 }, { versionKey: false });
-
 module.exports = mongoose.model("Kbb", kbbSchema);
