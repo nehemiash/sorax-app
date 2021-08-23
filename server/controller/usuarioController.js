@@ -229,7 +229,7 @@ let listarTecnicos = (req, res) => {
     Usuario.find({
             $and: [{ estado: true }, { tecnico: true }],
         })
-        .sort(nombre)
+        .sort("nombre")
         .exec((err, tecnicos) => {
             if (err) {
                 return res.json({
