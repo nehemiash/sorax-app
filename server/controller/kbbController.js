@@ -63,7 +63,7 @@ let status = async(req, res) => {
         masdequince = numOfDocs;
     });
 
-    await Kbb.countDocuments({ $and: [mas_de_quince, { estado: true }] }, (err, numOfDocs) => {
+    await Kbb.countDocuments({ $and: [mas_de_un_mes, { estado: true }] }, (err, numOfDocs) => {
         if (err) throw err;
         masdeunmes = numOfDocs;
     });
