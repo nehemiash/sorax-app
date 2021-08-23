@@ -137,6 +137,7 @@ let listar = async(req, res) => {
                 kbbs,
             });
         });
+    ``;
 };
 
 let listarCentro = async(req, res) => {
