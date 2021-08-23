@@ -227,28 +227,30 @@ let listarTecnicos = (req, res) => {
     );
 
     Usuario.find({
-        $and: [{ estado: true }, { tecnico: true }],
-    }).exec((err, tecnicos) => {
-        if (err) {
-            return res.json({
-                ok: false,
-                err,
-            });
-        }
+            $and: [{ estado: true }, { tecnico: true }],
+        })
+        .sort(nombre)
+        .exec((err, tecnicos) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err,
+                });
+            }
 
-        if (Object.entries(tecnicos).length === 0) {
-            return res.json({
-                ok: false,
-                message: "No se encontro el usuario",
-            });
-        }
+            if (Object.entries(tecnicos).length === 0) {
+                return res.json({
+                    ok: false,
+                    message: "No se encontro el usuario",
+                });
+            }
 
-        res.json({
-            ok: true,
-            total_tecnicos,
-            tecnicos,
+            res.json({
+                ok: true,
+                total_tecnicos,
+                tecnicos,
+            });
         });
-    });
 };
 
 module.exports = {
