@@ -73,9 +73,14 @@ let status = async(req, res) => {
         retornar = numOfDocs;
     });
 
-    await Kbb.countDocuments({ estado: false }, (err, numOfDocs) => {
+    await Kbb.countDocuments({ estado: false, sitacion: "retornado" }, (err, numOfDocs) => {
         if (err) throw err;
         retornado = numOfDocs;
+    });
+
+    await Kbb.countDocuments({ estado: false, situacion: "transito" }, (err, numOfDocs) => {
+        if (err) throw err;
+        transito = numOfDocs;
     });
 
     await res.json({
@@ -91,6 +96,7 @@ let status = async(req, res) => {
             masdequince,
             masdeunmes,
             retornar,
+            transito,
         },
     });
 };
