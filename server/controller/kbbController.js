@@ -373,13 +373,14 @@ let retornarMultiple = (req, res) => {
 
     switch (tipo) {
         case "retornar":
-            let retornar = {
-                obs: obs,
-                consolidado: consoStatus,
-                situacion: "retornado",
-                estado: false,
-            };
-            Kbb.updateMany({ _id: { $in: ids } }, { $set: retornar }, { multi: true }).exec((err, kbbAct) => {
+            Kbb.updateMany({ _id: { $in: ids } }, [{
+                $set: {
+                    obs: { $concat: ["$obs", obs] },
+                    consolidado: consoStatus,
+                    situacion: "retornado",
+                    estado: false,
+                },
+            }, ], { multi: true }).exec((err, kbbAct) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -404,14 +405,15 @@ let retornarMultiple = (req, res) => {
             break;
 
         case "transito":
-            let transito = {
-                obs: obs,
-                consolidado: consoStatus,
-                situacion: "transito",
-                estado: false,
-                salida: Date.now(),
-            };
-            Kbb.updateMany({ _id: { $in: ids } }, { $set: transito }, { multi: true }).exec((err, kbbAct) => {
+            Kbb.updateMany({ _id: { $in: ids } }, [{
+                $set: {
+                    obs: { $concat: ["$obs", obs] },
+                    consolidado: consoStatus,
+                    situacion: "transito",
+                    estado: false,
+                    salida: Date.now(),
+                },
+            }, ], { multi: true }).exec((err, kbbAct) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -436,14 +438,17 @@ let retornarMultiple = (req, res) => {
             break;
 
         case "recepcionado":
-            let recepcionado = {
-                obs: "",
-                consolidado: false,
-                situacion: "recepcionado",
-                estado: true,
-                salida: "",
-            };
-            Kbb.updateMany({ _id: { $in: ids } }, { $set: recepcionado }, { multi: true }).exec((err, kbbAct) => {
+            Kbb.updateMany({ _id: { $in: ids } }, [{
+                $set: {
+                    obs: { $concat: ["$obs", obs] },
+                    consolidado: false,
+                    situacion: "recepcionado",
+                    estado: true,
+                    salida: "",
+                },
+            }, ], {
+                multi: true,
+            }).exec((err, kbbAct) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -468,14 +473,94 @@ let retornarMultiple = (req, res) => {
             break;
 
         case "consolidado":
-            let consolidado = {
-                obs: obs,
-                consolidado: consoStatus,
-                situacion: "consolidado",
-                estado: false,
-                salida: "",
-            };
-            Kbb.updateMany({ _id: { $in: ids } }, { $set: consolidado }, { multi: true }).exec((err, kbbAct) => {
+            Kbb.updateMany({ _id: { $in: ids } }, [{
+                $set: {
+                    obs: { $concat: ["$obs", obs] },
+                    consolidado: consoStatus,
+                    situacion: "consolidado",
+                    estado: false,
+                    salida: "",
+                },
+            }, ], {
+                multi: true,
+            }).exec((err, kbbAct) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err,
+                    });
+                }
+
+                if (!kbbAct) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: "Kbbs no encontrados",
+                        },
+                    });
+                }
+
+                res.json({
+                    ok: true,
+                    kbbAct,
+                });
+            });
+            break;
+
+        case "desechar":
+            console.log(ids);
+            Kbb.updateMany({ _id: { $in: ids } }, [{
+                $set: {
+                    obs: obs,
+                    consolidado: consoStatus,
+                    situacion: "retornado",
+                    estado: false,
+                    salida: Date.now(),
+                },
+            }, ], {
+                multi: true,
+            }).exec((err, kbbAct) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err,
+                    });
+                }
+
+                if (!kbbAct) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: "Kbbs no encontrados",
+                        },
+                    });
+                }
+
+                res.json({
+                    ok: true,
+                    kbbAct,
+                });
+            });
+            break;
+    }
+};
+
+let retiradaMultiple = (req, res) => {
+    let ids = req.body.ids;
+    let obs2 = req.body.obs;
+    let tipo = req.body.tipo;
+
+    switch (tipo) {
+        case "financiero":
+            Kbb.updateMany({ _id: { $in: ids } }, [{
+                $set: {
+                    obs: { $concat: ["$obs", obs2] },
+                    financiero: true,
+                    financieroFec: Date.now(),
+                },
+            }, ], {
+                multi: true,
+            }).exec((err, kbbAct) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -529,10 +614,10 @@ let buscar = async(req, res) => {
     Kbb.find({
             $or: [
                 { sro: regex },
-                { gsxNum: regex },
-                { orden: regex },
-                { kbb: regex },
-                { kgb: regex },
+                { gsxNum: termino },
+                { orden: termino },
+                { kbb: termino },
+                { kgb: termino },
                 { guiaImp: regex },
                 { guiaExp: regex },
             ],
@@ -629,4 +714,5 @@ module.exports = {
     status,
     retornarMultiple,
     listarCentro,
+    retiradaMultiple,
 };

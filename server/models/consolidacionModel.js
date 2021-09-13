@@ -20,6 +20,7 @@ let consolidacionSchema = new Schema({
         default: true,
     },
     status: String,
+    obs: String,
 }, { versionKey: false });
 
 module.exports = mongoose.model("Consolidacion", consolidacionSchema);

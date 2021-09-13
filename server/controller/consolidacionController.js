@@ -1,4 +1,5 @@
 const Consolidacion = require("../models/consolidacionModel");
+const Kbb = require("../models/kbbModel");
 
 const { QueryOpts } = require("../controller/dbconfig");
 
@@ -6,13 +7,14 @@ let listar = async(req, res) => {
     let pagina = Number(req.query.pagina) || 1;
     let limite = Number(req.query.limite) || 15;
     let sort = req.query.sort || "-numero";
+    let tipo = req.query.tipo || "consolidacion";
 
     let skip = pagina - 1;
     skip = skip * limite;
     let total_paginas;
     let total_cons;
 
-    const opts = { activa: true };
+    const opts = { activa: true, tipo: tipo };
 
     await Consolidacion.countDocuments(opts, (err, numOfDocs) => {
         if (err) throw err;
@@ -82,10 +84,11 @@ let mostrarPorId = (req, res) => {
 
 let crear = async(req, res) => {
     let body = req.body;
+    let tipo = req.body.tipo;
 
     let numero;
     // trae el ultimo registro de la DB
-    let ultimo = await Consolidacion.find({}, "-_id numero").sort({ $natural: -1 }).limit(1).exec();
+    let ultimo = await Consolidacion.find({ tipo }, "-_id numero").sort({ $natural: -1 }).limit(1).exec();
 
     // convierte a numero e incrementa
     if (ultimo.length > 0) {
