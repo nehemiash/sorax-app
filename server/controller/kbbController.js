@@ -508,7 +508,6 @@ let retornarMultiple = (req, res) => {
             break;
 
         case "desechar":
-            console.log(ids);
             Kbb.updateMany({ _id: { $in: ids } }, [{
                 $set: {
                     obs: obs,
@@ -651,6 +650,91 @@ let buscar = async(req, res) => {
         });
 };
 
+let buscarFiltrado = async(req, res) => {
+    let termino = req.params.termino;
+    let filtro = req.query.filtro;
+    let pagina = Number(req.query.pagina) || 1;
+    let limite = Number(req.query.limite) || 15;
+    let sort = req.query.sort || filtro;
+
+    let skip = pagina - 1;
+    skip = skip * limite;
+    let total_paginas;
+    let total_kbbs;
+
+    let opts;
+
+    switch (filtro) {
+        case "sro":
+            opts = { sro: termino };
+            break;
+        case "gsxNum":
+            opts = { gsxNum: termino };
+            break;
+        case "orden":
+            opts = { orden: termino };
+            break;
+        case "kbb":
+            opts = { kbb: termino };
+            break;
+        case "kgb":
+            opts = { kgb: termino };
+            break;
+        case "guiaImp":
+            opts = { guiaImp: termino };
+            break;
+        case "guiaExp":
+            opts = { guiaExp: termino };
+            break;
+        case "parte":
+            opts = { parte: termino };
+            break;
+    }
+
+    await Kbb.countDocuments(opts, (err, numOfDocs) => {
+        if (err) throw err;
+        total_paginas = Math.ceil(numOfDocs / limite);
+        total_kbbs = numOfDocs;
+    });
+
+    if (isNaN(termino)) {
+        nan = 0;
+    } else {
+        nan = termino;
+    }
+
+    Kbb.find(opts)
+        .skip(skip)
+        .limit(limite)
+        .populate("parte", "vpn descripcion sku precioReg coreValue")
+        .populate("usuario", "nombre")
+        .populate("tecnico", "nombre")
+        .sort(sort)
+        .exec((err, kbbs) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err,
+                });
+            }
+
+            if (Object.entries(kbbs).length === 0) {
+                return res.json({
+                    ok: false,
+                    message: "No se encontraron Kbbs",
+                });
+            }
+
+            res.json({
+                ok: true,
+                kbbs,
+                pagina,
+                total_paginas,
+                total_kbbs,
+            });
+        });
+};
+
 let buscarMultiple = async(req, res) => {
     let ids = req.body.ids;
     let sort = req.body.sort || "entrada";
@@ -710,6 +794,7 @@ module.exports = {
     buscar,
     retornar,
     buscarMultiple,
+    buscarFiltrado,
     listarTodo,
     status,
     retornarMultiple,

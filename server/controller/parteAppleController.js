@@ -106,14 +106,14 @@ let buscar = (req, res) => {
     let total_parteapple;
     let regex = new RegExp(termino, "gi");
 
-    ParteApple.countDocuments({ $or: [{ descripcion: regex }, { vpn: regex }, { sku: termino }] }, (err, numOfDocs) => {
+    ParteApple.countDocuments({ $or: [{ descripcion: regex }, { vpn: termino }, { sku: termino }] }, (err, numOfDocs) => {
         if (err) throw err;
         total_paginas = Math.ceil(numOfDocs / limite);
         total_parteapple = numOfDocs;
     });
 
     ParteApple.find({
-            $or: [{ descripcion: regex }, { vpn: regex }, { sku: termino }],
+            $or: [{ descripcion: regex }, { vpn: termino }, { sku: termino }],
         })
         .skip(skip)
         .limit(limite)
