@@ -46,7 +46,7 @@ let mostrarPorId = (req, res) => {
         return res.json({
             ok: false,
             err: {
-                message: "ID incorrecto",
+                message: "ID incorrecto ",
             },
         });
     }
